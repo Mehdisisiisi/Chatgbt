@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infinity Trader AI</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+    }
+    input, select, button {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #00bcd4;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #008c9e;
+    }
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Infinity Trader AI</h1>
+    <p>أدخل رمز السوق + اختر السوق لتحليل ذكي</p>
+    <input type="text" id="symbol" placeholder="مثال: BTC, AAPL" />
+    <select id="market">
+      <option value="crypto">العملات الرقمية</option>
+      <option value="stocks">الأسهم</option>
+      <option value="forex">الفوركس</option>
+    </select>
+    <br />
+    <button onclick="startAnalysis()">ابدأ التحليل الذكي</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function startAnalysis() {
+      const symbol = document.getElementById("symbol").value;
+      const market = document.getElementById("market").value;
+      const resultDiv = document.getElementById("result");
+
+      resultDiv.innerHTML = "جاري التحليل...";
+
+      try {
+        const res = await fetch(`/analyze?symbol=${symbol}&market=${market}`);
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        resultDiv.innerHTML = `
+          <h3>النتيجة:</h3>
+          <p><strong>${data.symbol}</strong> (${market})</p>
+          <p>السعر الحالي: $${data.price}</p>
+          <p>التوصية: ${data.recommendation}</p>
+        `;
+      } catch (err) {
+        resultDiv.innerHTML = "حدث خطأ أثناء التحليل. تأكد من الإدخال الصحيح.";
+      }
+    }
+  </script>
+</body>
+</html>
